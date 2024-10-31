@@ -13,7 +13,32 @@ const FloatingPlayer = ({imgUrl}) => {
   const colorCache = useRef({});
   const [bgColor, setBgColor] = useState('#091227');
 
+  useEffect(() => {
+    const fetchColors = async () => {
+      if (imgUrl === prevImgUrl.current && colorCache.current[imgUrl]) {
+        console.log('Using cached color:', colorCache.current[imgUrl]);
+        setBgColor(colorCache.current[imgUrl]);
+        return;
+      }
 
+      try {
+        const result = await getColor(imgUrl);
+        console.log('Color result:', result); 
+        if (result.dominantColor) {
+          colorCache.current[imgUrl] = result.dominantColor;
+          setBgColor(result.dominantColor); 
+        } else {
+          console.log('Color is near white');
+        }
+      } catch (error) {
+        console.error('Error fetching dominant color:', error);
+        setBgColor('#fff'); 
+      }
+    };
+
+    fetchColors();
+    prevImgUrl.current = imgUrl;
+  }, [imgUrl]);
 
   return (
     <View
