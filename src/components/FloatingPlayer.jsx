@@ -9,36 +9,11 @@ import Slider from '@react-native-community/slider';
 import MovingText from './MovingText';
 
 const FloatingPlayer = ({imgUrl}) => {
-  const [bgColor, setBgColor] = useState('#091227');
   const prevImgUrl = useRef(imgUrl);
   const colorCache = useRef({});
+  const [bgColor, setBgColor] = useState('#091227');
 
-  useEffect(() => {
-    const fetchColors = async () => {
-      if (imgUrl === prevImgUrl.current && colorCache.current[imgUrl]) {
-        console.log('Using cached color:', colorCache.current[imgUrl]);
-        setBgColor(colorCache.current[imgUrl]);
-        return;
-      }
 
-      try {
-        const result = await getColor(imgUrl);
-        console.log('Color result:', result); // Debugging
-        if (result.dominantColor) {
-          colorCache.current[imgUrl] = result.dominantColor;
-          setBgColor(result.dominantColor); // Cập nhật màu nền
-        } else {
-          console.log('Color is near white');
-        }
-      } catch (error) {
-        console.error('Error fetching dominant color:', error);
-        setBgColor('#fff'); // Màu nền mặc định nếu có lỗi
-      }
-    };
-
-    fetchColors();
-    prevImgUrl.current = imgUrl;
-  }, [imgUrl]);
 
   return (
     <View
